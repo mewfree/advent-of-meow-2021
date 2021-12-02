@@ -2,23 +2,20 @@ using DelimitedFiles
 
 input = readdlm("input") |> eachrow |> collect
 
-horizontal = filter(((dir, n),) -> dir == "forward", input) |> f->map(((dir, n),) -> n, f) |> sum
-depth = filter(((dir, n),) -> dir != "forward", input) |> f->map(((dir, n),) -> dir == "down" ? n : -n, f) |> sum
-println("Part 1: ", horizontal*depth)
+horizontal =
+    filter(((dir, n),) -> dir == "forward", input) |> f -> map(((dir, n),) -> n, f) |> sum
+depth =
+    filter(((dir, n),) -> dir != "forward", input) |>
+    f -> map(((dir, n),) -> dir == "down" ? n : -n, f) |> sum
 
-horizontal_p2 = 0
-depth_p2 = 0
-aim_p2 = 0
+println("Part 1: ", horizontal * depth)
 
-for (dir, n) in input
-    if dir == "forward"
-        global horizontal_p2 += n
-        global depth_p2 += aim_p2 * n
-    elseif dir == "down"
-        global aim_p2 += n
-    else
-        global aim_p2 -= n
-    end
-end
+(horizontal_p2, depth_p2) = reduce(((h, d, a), (dir, n)) -> if dir == "forward"
+    (h + n, d + a * n, a)
+elseif dir == "down"
+    (h, d, a + n)
+else
+    (h, d, a - n)
+end, input, init = (0, 0, 0))
 
-println("Part 2: ", horizontal_p2*depth_p2)
+println("Part 2: ", horizontal_p2 * depth_p2)
