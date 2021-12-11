@@ -24,7 +24,15 @@ function calculate_line_coordinates((x1, y1), (x2, y2))
             return [(x, y1) for x = x1:x2]
         end
     else
-        return []
+        if x2 > x1 && y2 > y1
+            return [(x, y) for (x, y) in zip(x1:x2, y1:y2)]
+        elseif x2 > x1 && y1 > y2
+            return [(x, y) for (x, y) in zip(x1:x2, y1:-1:y2)]
+        elseif x1 > x2 && y2 > y1
+            return [(x, y) for (x, y) in zip(x1:-1:x2, y1:y2)]
+        elseif x1 > x2 && y1 > y2
+            return [(x, y) for (x, y) in zip(x1:-1:x2, y1:-1:y2)]
+        end
     end
 end
 
@@ -41,3 +49,15 @@ function part_1(input)
 end
 
 println("Part 1: ", part_1(input))
+
+function part_2(input)
+    coordinates = []
+
+    for ((x1, y1), (x2, y2)) in input
+        append!(coordinates, calculate_line_coordinates((x1, y1), (x2, y2)))
+    end
+
+    return count(((coordinates, freq), ) -> freq >= 2, countmap(coordinates))
+end
+
+println("Part 2: ", part_2(input))
