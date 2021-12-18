@@ -21,7 +21,7 @@ function find_incorrect(line)
         end
     end
 
-    return false
+    return expected
 end
 
 function calculate_score(input)
@@ -36,3 +36,18 @@ function calculate_score(input)
 end
 
 println("Part 1: ", calculate_score(input))
+
+function calculate_score_2(input)
+    score = Dict(
+        ")" => 1,
+        "]" => 2,
+        "}" => 3,
+        ">" => 4,
+    )
+
+    v = find_incorrect.(input) |> i -> filter(e -> isa(e, Vector), i) |> i -> reverse.(i)
+    w = reduce.((acc, i) -> acc * 5 + score[i], v, init = 0) |> sort
+    w[end ÷ 2 + 1]
+end
+
+println("Part 2: ", calculate_score_2(input))
